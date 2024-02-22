@@ -42,7 +42,7 @@ fasta_id = gi.tools.paste_content(fasta_contents, history['id'], file_type='fa')
 ## The fasta file will become a file with semantics according to input data: SampleData[...].
 q2_import = gi.tools.get_tools(name='qiime2 tools import')[0]
 params_fa = inputs().set('infile', dataset(fasta_id))
-gi.tools.run_tool(history['id'], qiime2_import['id'], params_fa)
+gi.tools.run_tool(history['id'], q2_import['id'], params_fa)
 
 ## These are demultiplexed (demux) and denoised (dada2), resulting in FeatureTable[Frequency] and FeatureData[Sequence] files.
 ## Maybe this only works when they are added like last time
