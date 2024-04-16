@@ -1,0 +1,7 @@
+qiime2 tools import
+qiime2 dada2 denoise-paired
+qiime2 phylogeny align-to-tree-mafft-raxml
+qiime2 feature-table rarefy
+qiime2 diversity alpha-phylogenetic
+qiime2 diversity beta-phylogenetic
+qiime2 tools export
