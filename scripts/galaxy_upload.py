@@ -29,7 +29,7 @@ histories = gi.histories.get_histories(name='qiime-dentity')
 history = histories[0]
 
 ## Load data into galaxy
-with open('../data/dna-sequences.fasta', 'r') as file:
+with open('data/dna-sequences.fasta', 'r') as file:
     seqs_contents = file.read()
 seqs_id = gi.tools.paste_content(seqs_contents, history['id'], file_type='fasta')['outputs'][0]['id']
 

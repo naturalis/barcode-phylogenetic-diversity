@@ -1,5 +1,5 @@
 ## Imports all tools at once and puts them in a list used in params_set and tool_run
-tools = open('src/tools.txt', 'r')
+tools = open('scripts/tools.txt', 'r')
 tool_list = tools.read().split('\n')
 
 imported_tools = []

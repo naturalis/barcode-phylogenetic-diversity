@@ -1,6 +1,6 @@
 ## Running the right tools with the right parameters
 ## Depends on tool_import and params_set
-## tool_name should be defined somewhere else, probably, don't know how yet
+## tool_name should be defined differently
 tool_name = 'qiime2 tools import'
 
 ## Get the right parameters
