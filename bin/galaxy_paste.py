@@ -6,13 +6,12 @@ Created on Mon Feb  5 13:57:12 2024
 """
 ## This is a script adjusted from bioblend to connect with the galaxy server and upload sequence data.
 ## Based on: https://github.com/naturalis/bioblend-test/blob/main/client.py
-## Notes with one hashtag are from bioblend by rvosa, two are mine
 
 ##Dependencies
 from bioblend import galaxy
-from bioblend.galaxy.tools.inputs import inputs, dataset
+#from bioblend.galaxy.tools.inputs import inputs, dataset
 import os
-import requests
+#import requests
 from dotenv import load_dotenv, find_dotenv
 
 # Endpoints for the Naturalis production instance. Domain can also be an IP address.
@@ -28,10 +27,12 @@ gi = galaxy.GalaxyInstance(domain, key=api_key)
 histories = gi.histories.get_histories(name='qiime-dentity')
 history = histories[0]
 
-## Load data into galaxy
-with open('data/dna-sequences.fasta', 'r') as file:
+## Load sequence data into galaxy
+with open('data/sequences.fasta', 'r') as file:
     seqs_contents = file.read()
 seqs_id = gi.tools.paste_content(seqs_contents, history['id'], file_type='fasta')['outputs'][0]['id']
+
+##Write id to textfile next
 
 
 
