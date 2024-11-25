@@ -3,8 +3,6 @@
 
 # in progress / testing
 ignore
-
-#This thing
 .idea
 
 # Byte-compiled / optimized / DLL files
