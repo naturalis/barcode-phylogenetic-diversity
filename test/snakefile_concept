@@ -1,0 +1,138 @@
+#Overall structure of workflow. Output of most rules is a textfile with the id of the output or tool.
+
+rule all
+    input:
+        '../results/alpha_heatmap.png',
+        '../results/beta_dendro.png',
+        '../results/beta_pcoa.png'
+
+rule get_data
+    input:
+        '../bin/get_data.py'
+    output:
+        '../data/sequences.fa'
+
+rule paste_data
+    input:
+        '../data/sequences.fa'
+    output:
+        temp('../results/galaxy-ids/paste_id.txt')
+    script:
+        '../bin/galaxy_paste.py'
+
+rule get_tools
+    input:
+        'tool_list.txt'
+    output:
+        temp('../results/galaxy-ids/import_tool.txt'),
+        temp('../results/galaxy-ids/dada_tool.txt'),
+        temp('../results/galaxy-ids/mrax_tool.txt'),
+        temp('../results/galaxy-ids/ftr_tool.txt'),
+        temp('../results/galaxy-ids/alpha_tool.txt'),
+        temp('../results/galaxy-ids/beta_tool.txt'),
+        temp('../results/galaxy-ids/export_tool.txt')
+    log:
+        '../results/logs/get_tools.log'
+    shell:
+        '(../bin/get_tools.py) 2> {log}'
+
+rule q2_import
+    input:
+        '../results/galaxy-ids/paste_out.txt',
+        '../results/galaxy-ids/import_tool.txt'
+    output:
+        temp('../results/galaxy-ids/import_out.txt'
+    log:
+        '../results/logs/q2_import.log'
+    shell:
+        '(../bin/run_tools.py) 2> {log}'
+
+rule dada2
+    input:
+        '../results/galaxy-ids/import_out.txt',
+        '../results/galaxy-ids/dada_tool.txt'
+    output:
+        temp('../results/galaxy-ids/dada_out.txt'),
+        temp('../results/galaxy-ids/dada_out2.txt')
+    log:
+        '../results/logs/dada2.log'
+    shell:
+        '(../bin/run_tools.py) 2> {log}'
+
+rule mafft_raxml
+    input:
+        '../results/galaxy-ids/dada_.txt',
+        '../results/galaxy-ids/tools_id.txt'
+    output:
+        temp('../results/ids/mafft_raxml_id.txt')
+    log:
+        '../results/logs/mafft_raxml.log'
+    shell:
+        '(../bin/run_tools.py) 2> {log}'
+
+rule rarefy
+    input:
+        '../results/ids/dada_out.txt',
+        '../results/ids/tools_id.txt'
+    output:
+        temp('../results/ids/rarefy_id.txt')
+    log:
+        '../results/logs/rarefy.log'
+    shell:
+        '(../bin/run_tools.py) 2> {log}'
+
+rule alpha_div
+    input:
+        '../results/ids/rarefy_id.txt',
+        '../results/ids/mafft_raxml_id.txt',
+        '../results/ids/tools_id.txt'
+    output:
+        temp('../results/ids/alpha_id.txt')
+    log:
+        '../results/logs/alpha_div.log'
+    shell:
+        '(../bin/run_tools.py) 2> {log}'
+
+rule beta_div
+    input:
+        '../results/ids/rarefy_id.txt',
+        '../results/ids/mafft_raxml_id.txt',
+        '../results/ids/tools_id.txt'
+    output:
+        temp('../results/ids/beta_id.txt')
+    log:
+        '../results/logs/beta_div.log'
+    shell:
+        '(../bin/run_tools.py) 2> {log}'
+
+rule q2_export:
+    input:
+        '../results/ids/alpha_id.txt',
+        '../results/ids/beta_id.txt',
+        '../results/ids/tools_id.txt'
+    output:
+        temp('../results/ids/export_id.txt')
+    log:
+        '../results/logs/get_tools.log'
+    shell:
+        '(../bin/run_tools.py) 2> {log}'
+
+rule extract_alpha_beta
+    input:
+        '../results/ids/export_id.txt'
+    output:
+        '../results/div-metrics/faith_pd.tsv',
+        '../results/div-metrics/dist_matrix.tsv'
+    shell:
+        '../bin/galaxy_extract.py'
+
+rule visualize
+    input:
+        '../results/div-metrics/faith_pd.tsv',
+        '../results/div-metrics/dist_matrix.tsv'
+    output:
+        '../results/alpha_heatmap.png',
+        '../results/beta_dendro.png',
+        '../results/beta_pcoa.png'
+    shell:
+        '../bin/divmet_vis.R'
