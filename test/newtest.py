@@ -27,7 +27,7 @@ histories = gi.histories.get_histories(name=history_name)
 history = gi.histories.create_history(history_name) if not histories else histories[0]
 
 # Load data into Galaxy
-fasta_path = 'data/sequences.fasta'
+fasta_path = '../data/sequences.fasta'
 with open(fasta_path, 'r') as file:
     seqs_contents = file.read()
 
@@ -63,7 +63,7 @@ try:
     imp_response = requests.get(url)
     imp_response.raise_for_status()
 
-    with open("ignore/imported_data.qza", "w") as file:
+    with open("../ignore/imported_data.qza", "w") as file:
         file.write(imp_response.text)
 
     print("Import and retrieval successful")
@@ -77,7 +77,7 @@ except Exception as e:
 
 print("Response to request imported data is:", imp_response)
 
-#gi.histories.delete_history(histories[0]['id'])
+##gi.histories.delete_history(history['id'])
 
 
 

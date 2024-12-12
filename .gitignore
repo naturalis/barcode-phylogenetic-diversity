@@ -4,6 +4,8 @@
 # in progress / testing
 ignore
 .idea
+test
+docs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

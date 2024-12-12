@@ -1,12 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb  5 13:57:12 2024
-
-@author: chuis
-"""
-## This is a script adjusted from bioblend to connect with the galaxy server and upload sequence data.
-
-##Dependencies
+## Imports all tools at once and puts them in a list used in params_set and tool_run
+#Maybe make this into a dictionairy with tool_ids
 from bioblend import galaxy
 import os
 
@@ -24,15 +17,19 @@ history_name = 'barcode-phylogenetic-diversity'
 histories = gi.histories.get_histories(name=history_name)
 history = gi.histories.create_history(history_name) if not histories else histories[0]
 
-## Load sequence data into galaxy
-input_path = snakemake.input[0]
-with open(f'{input_path}', 'r') as file:
-    seqs_contents = file.read()
-seqs_id = gi.tools.paste_content(seqs_contents, history['id'], file_type='fasta')['outputs'][0]['id']
+#getting the tool names, creating textfiles for each snakefile_concept rule
+tools = open('src/tools.txt', 'r')
+tool_list = tools.read().split('\n')
 
-##Write id to textfile next
-output_path = snakemake.output[0]
-with open(f'{output_path}', 'w') as idfile:
-    idfile.write(f'{seqs_id}')
+#==#
 
-##gi.histories.delete_history(history['id'])
+
+#Import tools
+imported_tools = []
+for tool in range(0, len(tool_list)):
+    added_tool = gi.tools.get_tools(name=tool_list[tool])[0]
+    imported_tools.append(added_tool)
+
+#Create dictionary
+tools_dict = dict(zip(tool_list, imported_tools))
+#==#
