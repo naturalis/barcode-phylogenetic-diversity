@@ -1,5 +1,7 @@
 #### This is a script for visualizing exported alpha and beta diversity from qiime2.
-# Made 25-03-2024
+# Created 25-03-2024
+# Needs relative snakemake paths, implementation of ITS dataset and metadata,
+# and better/adaptable dimensions for visualization.
 
 ### Content
 ## 1 Dependencies
@@ -12,29 +14,26 @@
       # 4.2 Visualize distance matrix in dendrogram (ggplot2)
       # 4.3 Visualize pcoa (ggplot2)
 
-### Unused extras for now
-## 5 Base R dendrogram
-## 6 ape package
-## 7 dendextend and piping
-## 8 Bootstrap and p-values
+
 #-------------------------------------------------------------------------------------------------------------
   
 ### Diversity metrics visualizations
-## 1 Dependencies 
+## 1 Dependencies & working directory
 #install.packages("ggplot2", "ggdendro", "dplyr")
 library(ggplot2)
 library(ggdendro)
 library(dplyr)
 
+
 ## 2 Load metadata
-meta_raw <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/MP divmet/sample-metadata.tsv", header = TRUE)
+meta_raw <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/sample-metadata.tsv", header = TRUE)
 meta <- meta_raw[-c(1),]
 
 
 ## 3 Alpha diversity
 ## 3.1 Get data and prepare metadata
 # Get alpha diversity faith pd
-ad <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/MP divmet/alpha-diversity.tsv")
+ad <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/alpha_diversity.tsv")
 
 # Adjust metadata to alpha diversity dataset
 # Not all metadata is needed because of truncation and it needs ordering
@@ -46,6 +45,7 @@ meta_orda <- meta_afilt[orda,]
 
 # 3.2 Visualize faith pd in ggplot heatmap
 # Get vertical labeling for x-axis
+# You need to specify the size of everything for automatically saving qq
 ggplot(ad, aes(x = X.SampleID, y = meta_orda$body.site, fill = faith_pd)) +
   geom_tile(color = 'black') + 
   scale_fill_gradient(low = "palegreen", high = "palegreen4") +
@@ -53,12 +53,14 @@ ggplot(ad, aes(x = X.SampleID, y = meta_orda$body.site, fill = faith_pd)) +
   labs(y = "Body site", x = "Sample ID", fill = "Faith PD") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
-# 3.3 Maybe another way? See DMB Notes
+#plot_dir <- dirname(snakemake@output[[1]])
+heatmap_dir <- "C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/"
+ggsave('alpha_heatmap.png', plot = last_plot(), path = heatmap_dir)
 
 ## 4 Beta diversity
 # 4.1 Get data and prepare metadata
 # Get beta diversity distance matrix from somewhere and cluster with hclust
-beta_df <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/MP divmet/distance-matrix.tsv")
+beta_df <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/beta_diversity.tsv")
 dm_df <- beta_df[,-c(1)]
 dm <- as.dist(dm_df)
 hc <- hclust(dm, method = "average")
@@ -88,7 +90,8 @@ ggplot(dend_data$segments) +
   labs(col = "Body site") +
   ylim(-0.5, 1)
 
-
+dendro_dir <- "C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/"
+ggsave('beta_dendro.png', plot = last_plot(), path = dendro_dir)
 
 ## 4.3 PCoA and visualization
 # Perform pcoa
@@ -104,71 +107,8 @@ pcoaplot <- pcoa %>%
   geom_point() + labs(col = "Body site", x = "PCo 1", y = "PCo 2")
 print(pcoaplot)
   
+pcoa_dir <- "C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/"
+ggsave('beta_pcoa.png', plot = last_plot(), path = pcoa_dir)
+
 #-----------------------------------------------------------------------------------------------------------------------------------
-##Extra/leftovers
-# Dependencies
-# install.packages("ape", "dendextend", "pvclust")
-library(ape)
-library(dendextend)
-library(pvclust)
-
-# 5 Base R plot
-# Extra customization, type can be "cladogram", "rectangle"/ommit, "unrooted", "fan", "radial" probably
-nodePar <- list(lab.cex = 0.6, pch = c(NA, 19), 
-                cex = 0.7, col = "blue")
-edgePar <- list(col = 2:3, lwd = 2:1)
-
-plot(dend, type = "rectangle", ylab = "Height", nodePar = nodePar, leaflab = "none", horiz = TRUE, edgePar = edgePar)
-
-## 6 With ape package
-# I'd rather just do ggplot at this point qq
-# Colored cluster customization
-# Type can be "cladogram", "rectangle"/ommit, "unrooted", "fan", "radial"
-colors = c("red", "blue", "green")
-clus3 = cutree(hc, 3)
-
-phylo <- as.phylo(hc)
-plot(phylo, type = "cladogram", cex = 0.5, label.offset = 0.5, tip.color = colors[clus3], edge.color = "steelblue", edge.width = 2, edge.lty = 2) 
-
-## 7 Use dendextend
-# Dendextend customization went awry, so no
-#bodsit_fac <- as.factor(meta_ord$body.site) 
-#bodsit_num <- as.numeric(bodsit_fac)
-
-# Node, edges and leaves points/shapes
-dendgg <- dend %>%
-  #set("labels", c("a, "b")) %>%
-  set("labels_colors", bodsit_fac, order_value = TRUE)
-#set("nodes_pch", 19) %>%  
-#set("nodes_cex", 1) %>%  
-#set("nodes_col", "red") %>% 
-#set("leaves_cex", 2) %>%  
-#set("leaves_col", "blue") %>% 
-#set("leaves_pch", c(17, 18, 19)) %>%
-#set("branches_k_color", value = c("purple", "black", "cyan3"), k = 3)
-
-# Pipe into ggplot2
-# Theme can also be null
-ggd1 <- as.ggdend(dendgg)
-
-## 8 In case you need bootstrap shit
-rartab_raw <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/MP divmet/feature-table.tsv", skip = 1)
-rartab <- rartab_raw[,-1]
-rownames(rartab) <- rartab_raw[,1]
-
-head(rartab)
-
-set.seed(1234)
-result <- pvclust(rartab, method.dist="cor", 
-                  method.hclust="average", nboot=10)
-plot(result)
-#pvrect(result)
-
-# Throw in some dendextend, can customize further
-result %>% as.dendrogram %>% 
-  set("branches_k_color", k = 3, value = c("purple", "orange", "cyan3")) %>%
-  plot
-result %>% text
-#result %>% pvrect
-  
 
