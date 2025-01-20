@@ -20,6 +20,5 @@ Current example data comes from the qiime2 tutorial 'Moving Pictures'.
 **Still under construction**
 
 - dada2 tool is not implemented yet
-- might get rid of the tool dictionary structure
 - bin/galaxy_paste.py needs to handle multiple inputs
 - bin/visualize.R needs tinkering and is not integrated yet

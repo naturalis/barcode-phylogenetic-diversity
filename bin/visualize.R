@@ -1,6 +1,6 @@
 #### This is a script for visualizing exported alpha and beta diversity from qiime2.
 # Created 25-03-2024
-# Needs relative snakemake paths, implementation of ITS dataset and metadata,
+# Needs integration into workflow, implementation of ITS dataset and metadata,
 # and better/adaptable dimensions for visualization.
 
 ### Content
@@ -26,14 +26,16 @@ library(dplyr)
 
 
 ## 2 Load metadata
-meta_raw <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/sample-metadata.tsv", header = TRUE)
+meta_dir <- snakemake@input[[1]]
+meta_raw <- read.delim(meta_dir, header = TRUE)
 meta <- meta_raw[-c(1),]
 
 
 ## 3 Alpha diversity
 ## 3.1 Get data and prepare metadata
 # Get alpha diversity faith pd
-ad <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/alpha_diversity.tsv")
+alpha_dir <- snakemake@input[[2]]
+ad <- read.delim(alpha_dir)
 
 # Adjust metadata to alpha diversity dataset
 # Not all metadata is needed because of truncation and it needs ordering
@@ -45,7 +47,7 @@ meta_orda <- meta_afilt[orda,]
 
 # 3.2 Visualize faith pd in ggplot heatmap
 # Get vertical labeling for x-axis
-# You need to specify the size of everything for automatically saving qq
+# You need to specify the size of everything better
 ggplot(ad, aes(x = X.SampleID, y = meta_orda$body.site, fill = faith_pd)) +
   geom_tile(color = 'black') + 
   scale_fill_gradient(low = "palegreen", high = "palegreen4") +
@@ -53,14 +55,14 @@ ggplot(ad, aes(x = X.SampleID, y = meta_orda$body.site, fill = faith_pd)) +
   labs(y = "Body site", x = "Sample ID", fill = "Faith PD") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
-#plot_dir <- dirname(snakemake@output[[1]])
-heatmap_dir <- "C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/"
+heatmap_dir <- dirname(snakemake@output[[1]])
 ggsave('alpha_heatmap.png', plot = last_plot(), path = heatmap_dir)
 
 ## 4 Beta diversity
 # 4.1 Get data and prepare metadata
 # Get beta diversity distance matrix from somewhere and cluster with hclust
-beta_df <- read.delim("C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/beta_diversity.tsv")
+beta_dir <- snakemake@input[[3]]
+beta_df <- read.delim(beta_dir)
 dm_df <- beta_df[,-c(1)]
 dm <- as.dist(dm_df)
 hc <- hclust(dm, method = "average")
@@ -81,8 +83,7 @@ meta_ordb <- meta_filtb[ordb,]
 ## 4.2 Visualize distance matrix in dendrogram (ggplot2)
 # You can make default plot with ggdendro, but mainly useful for extraction of data
 #ggdendrogram(hc, rotate = TRUE, theme_dendro = FALSE)
-# Integrate with ggplot2, add coloration
-# Mind the fixed ylim
+# Integrate with ggplot2, add coloration, mind the fixed ylim
 ggplot(dend_data$segments) + 
   geom_segment(aes(x = x, y = y, xend = xend, yend = yend))+
   geom_text(data = dend_data$labels, aes(x, y, label = label, col = meta_ordb$body.site),
@@ -90,7 +91,7 @@ ggplot(dend_data$segments) +
   labs(col = "Body site") +
   ylim(-0.5, 1)
 
-dendro_dir <- "C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/"
+dendro_dir <- dirname(snakemake@output[[2]])
 ggsave('beta_dendro.png', plot = last_plot(), path = dendro_dir)
 
 ## 4.3 PCoA and visualization
@@ -107,7 +108,7 @@ pcoaplot <- pcoa %>%
   geom_point() + labs(col = "Body site", x = "PCo 1", y = "PCo 2")
 print(pcoaplot)
   
-pcoa_dir <- "C:/Users/chuis/Documents/Biology_BioSus/Masterstage_2/barcode-phylogenetic-diversity/results/div-metrics/"
+pcoa_dir <- dirname(snakemake@output[[3]])
 ggsave('beta_pcoa.png', plot = last_plot(), path = pcoa_dir)
 
 #-----------------------------------------------------------------------------------------------------------------------------------

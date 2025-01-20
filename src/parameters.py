@@ -8,7 +8,7 @@
 from bioblend.galaxy.tools.inputs import inputs, dataset
 
 # Put the parameters you want to use in here
-def set(tool_name, data_ids, in_file):
+def set(tool_name, data_ids, out_file):
     if tool_name == 'qiime2 tools import':
         params = inputs().set('import_root|type', 'FeatureData__ob__Sequence__cb__') \
             .set('__q2galaxy__GUI__cond__format__|format', 'DNAFASTAFormat') \
@@ -28,17 +28,17 @@ def set(tool_name, data_ids, in_file):
             .set('phylogeny', dataset(data_ids[1])) \
             .set('metric', 'faith_pd')
 
-    elif tool_name == 'qiime2 diversity beta-phylogenetic' :
+    elif tool_name == 'qiime2 diversity beta-phylogenetic':
         params = inputs().set('table', dataset(data_ids[0])) \
             .set('phylogeny', dataset(data_ids[1])) \
             .set('metric', 'weighted_unifrac')
 
-    elif tool_name == 'qiime2 tools export' and 'alpha' in in_file:
+    elif tool_name == 'qiime2 tools export' and 'alpha' in out_file:
         params = inputs().set('input', dataset(data_ids[0])) \
             .set('input|type_peek', 'SampleData__ob__AlphaDiversity__cb__') \
             .set('input|fmt_peek', 'AlphaDiversityDirectoryFormat') \
 
-    elif tool_name == 'qiime2 tools export' and 'beta' in in_file:
+    elif tool_name == 'qiime2 tools export' and 'beta' in out_file:
         params = inputs().set('input', dataset(data_ids[0])) \
             .set('input|type_peek', 'DistanceMatrix') \
             .set('input|fmt_peek', 'DistanceMatrixDirectoryFormat')
