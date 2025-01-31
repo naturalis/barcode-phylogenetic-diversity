@@ -6,7 +6,7 @@ Current example data comes from the qiime2 tutorial 'Moving Pictures'.
 
 **Preparation**
 
-- Make sure the ITS sequences are FASTQ files in Casava 1.8 demultiplexed format and present in the 'data' folder
+- Make sure the ITS sequences are FASTQ files in demultiplexed Phred33 format and present in the 'data' folder
 - Check/modify the tool list (src/tools.txt) and parameters (src/parameters.py)
 - Check/modify the snakefile (src/snakefile), specifically the target rule for the correct output
 

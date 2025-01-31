@@ -35,42 +35,39 @@ with open(f'{tool_path}', 'r') as name_f:
     tool_name = name_f.read()
 
 # Making a list of input ids to use for parameter setting
-data_ids =[]
-index = 0
-while snakemake.input[index] != snakemake.input[-1]:
-    data_path = snakemake.input[index+1]
+data_ids = []
+for data_path in snakemake.input[1:]:
     with open(f'{data_path}', 'r') as data_f:
-        data_ids.append(data_f.read())
-    index += 1
+        data_id = data_f.read().split('\n')
+    data_ids.extend(data_id)
 
-## Get the right parameters and tool according to tool_name and data_ids
+## Get the right tool according to tool_name
 # out_file variable is set for dealing with different export parameters (i.e. alpha/beta)
-logging.debug('Setting parameters and getting tool.')
+logging.info('Getting the tool and setting out_file variable.')
 
+tool = gi.tools.get_tools(name=tool_name)
+if not tool:
+    raise ValueError(f"Tool '{tool_name}' not found in Galaxy instance. Check definition.")
+
+tool_id = tool[0]['id']
 out_file = os.path.basename(snakemake.output[0])
 params = parameters.set(tool_name, data_ids, out_file)
 
-tool = gi.tools.get_tools(name=tool_name)
-tool_id = tool[0]['id']
-
-## Running the tool in question
-logging.debug('Running the appropriate tool...')
+## Parameter setting and running the tool
+logging.info(f"Running the appropriate tool: {tool_name}")
 try:
     results = gi.tools.run_tool(history['id'], tool_id, params)
-
     job = results['jobs'][0]
     jc = galaxy.jobs.JobsClient(galaxy_instance=gi)
     jc.wait_for_job(job_id=job['id'])
 
 except ConnectionError as e:
-    print(e.body)
+    logging.error(f"Failed to run {tool_name}: {e}")
 
-
-##Writing output into id files
-logging.debug('Saving output id(s) to temporary file(s) for further use.')
+# Saving output ids. Tools with multiple outputs
+logging.info(f"Saving output id(s) of {tool_name} to temporary file(s) for further use.")
 for res in range(len(results['outputs'])):
     output_path = snakemake.output[res]
     result_id = results['outputs'][res]['id']
     with open(f'{output_path}', 'w') as output_f:
         output_f.write(result_id)
-

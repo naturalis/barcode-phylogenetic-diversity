@@ -9,10 +9,16 @@ from bioblend.galaxy.tools.inputs import inputs, dataset
 
 # Put the parameters you want to use in here
 def set(tool_name, data_ids, out_file):
+
     if tool_name == 'qiime2 tools import':
-        params = inputs().set('import_root|type', 'FeatureData__ob__Sequence__cb__') \
-            .set('__q2galaxy__GUI__cond__format__|format', 'DNAFASTAFormat') \
+        params = inputs().set('import_root|type', 'SampleData__ob__PairedEndSequencesWithQuality__cb__') \
+            .set('__q2galaxy__GUI__cond__format__|format', 'PairedEndFastqManifestPhred33') \
             .set('__q2galaxy__GUI__cond__format__|data', dataset(data_ids[0]))
+
+    elif tool_name == 'qiime2 dada2 denoise-paired':
+        params = inputs().set('demultiplexed_seqs', dataset(data_ids[0])) \
+            .set('trunc_len_f', 0) \
+            .set('trunc_len_r', 0)
 
     elif tool_name == 'qiime2 phylogeny align-to-tree-mafft-raxml':
         params = inputs().set('sequences', dataset(data_ids[0])) \
@@ -54,7 +60,8 @@ def set(tool_name, data_ids, out_file):
 #            .set('input|type_peek', 'Phylogeny__ob__Rooted__cb__') \
 #            .set('input|fmt_peek', 'Phylogeny__ob__Rooted__cb__') \
 #            .set('output_format', 'NewickDirectoryFormat')
+
     else:
-        print('No parameters for this tool. Check tool list, or definition of tool_name or in_file.')
+        print('No parameters for this tool. Check tool list, or definition of tool_name or out_file.')
 
     return params
