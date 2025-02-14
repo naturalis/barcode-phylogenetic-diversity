@@ -6,6 +6,7 @@ import os
 #import dotenv
 import logging
 import parameters
+import requests
 
 # configure logging
 logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG,
@@ -13,12 +14,14 @@ logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG,
 
 # Endpoints for the Naturalis production instance. Domain can also be an IP address.
 # The API key can be obtained from https://galaxy.naturalis.nl/user/api_key
-logging.debug('Accessing galaxy instance with API key.')
-domain = 'galaxy.naturalis.nl'
-dlbase = f'https://{domain}/api/datasets'
+logging.info('Accessing galaxy instance with API key.')
+domain = 'https://galaxy.naturalis.nl'
+response = requests.get(domain)
+logging.debug(f'Response from {domain}: {response}')
 
 #dotenv.load_dotenv(dotenv.find_dotenv(usecwd=True))
 api_key = os.environ.get('GALAXY_API_KEY')
+logging.debug(f"API Key provided: {bool(api_key)}")
 gi = galaxy.GalaxyInstance(domain, key=api_key)
 
 # Get or create a new history. The civilized thing would be to delete this when done.

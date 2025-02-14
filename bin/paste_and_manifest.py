@@ -19,8 +19,7 @@ logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG,
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Endpoints for the Naturalis production instance. Domain can also be an IP address.
-domain = 'galaxy.naturalis.nl'
-dlbase = f'https://{domain}/api/datasets'
+domain = 'https://galaxy.naturalis.nl'
 logging.debug(f"Accessing galaxy instance: {domain}")
 
 # The API key can be obtained from https://galaxy.naturalis.nl/user/api_key

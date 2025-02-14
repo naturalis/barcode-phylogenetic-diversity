@@ -4,20 +4,32 @@
 
 rule all:
     input:
-        '../results/galaxy-ids/paste_manifest_out.txt',
-        '../results/galaxy-ids/import_out.txt',
-        '../results/galaxy-ids/dada2_out.txt',
+#        '../results/galaxy-ids/paste_manifest_out.txt',
+#        '../results/galaxy-ids/import_out.txt',
+#        '../results/galaxy-ids/dada2_out.txt',
 #        '../results/galaxy-ids/mafft-raxml_out.txt',
 #        '../results/galaxy-ids/rarefy_out.txt',
-#        '../results/div-metrics/alpha_div_out.txt'
-#        '../results/div-metrics/beta_div_out.txt',
+#        '../results/galaxy-ids/alpha_div_out.txt',
+#        '../results/galaxy-ids/beta_div_out.txt',
 #        '../results/galaxy-ids/export_alpha_out.txt',
 #        '../results/galaxy-ids/export_beta_out.txt',
 #        '../results/div-metrics/alpha_diversity.tsv',
-#        '../results/div-metrics/beta_diversity.tsv',
-#        '../results/div-metrics/alpha_heatmap.png'
-#        '../results/div-metrics/beta_dendro.png',
-#        '../results/div-metrics/beta_pcoa.png'
+#        '../results/div-metrics/beta_diversity.tsv'
+        '../results/div-metrics/alpha_heatmap.png',
+        '../results/div-metrics/beta_dendro.png',
+        '../results/div-metrics/beta_pcoa.png'
+
+
+rule paste_manifest:
+    input:
+        '../data'
+    output:
+        '../data/4854_manifest.csv',
+        '../results/galaxy-ids/paste_manifest_out.txt'
+    log:
+        '../results/logs/paste_manifest.log'
+    script:
+        '../bin/paste_and_manifest.py'
 
 rule get_tool_names:
     input:
@@ -35,17 +47,6 @@ rule get_tool_names:
     script:
        	'../bin/get_tool_names.py'
 
-rule paste_manifest:
-    input:
-        '../data'
-    output:
-        '../data/4854_manifest.csv',
-        '../results/galaxy-ids/paste_manifest_out.txt'
-    log:
-        '../results/logs/paste_manifest.log'
-    script:
-        '../bin/paste_and_manifest.py'
-
 rule qiime2_import:
     input:
         '../results/galaxy-ids/import_tool.txt',
@@ -57,18 +58,18 @@ rule qiime2_import:
     script:
         '../bin/run_tools.py'
 
-rule dada2:
-    input:
-        '../results/galaxy-ids/dada2_tool.txt',
-        '../results/galaxy-ids/import_out.txt'
-    output:
-        '../results/galaxy-ids/dada2_out.txt',
-        '../results/galaxy-ids/dada2_out2.txt',
-        '../results/galaxy-ids/dada2_out3.txt'
-    log:
-        '../results/logs/dada2.log'
-    script:
-        '../bin/run_tools.py'
+#rule dada2:
+#    input:
+#        '../results/galaxy-ids/dada2_tool.txt',
+#        '../results/galaxy-ids/import_out.txt'
+#    output:
+#        '../results/galaxy-ids/dada2_out.txt',
+#        '../results/galaxy-ids/dada2_out2.txt',
+#        '../results/galaxy-ids/dada2_out3.txt'
+#    log:
+#        '../results/logs/dada2.log'
+#    script:
+#        '../bin/run_tools.py'
 
 rule mafft_raxml:
     input:
@@ -155,7 +156,6 @@ rule extract_data:
 
 rule visualize:
     input:
-        '../data/4854_IndexAssignment.csv',
         '../results/div-metrics/alpha_diversity.tsv',
         '../results/div-metrics/beta_diversity.tsv'
     output:
@@ -165,4 +165,4 @@ rule visualize:
     log:
         '../results/logs/visualize.log'
     script:
-        '../bin/visualize.py'
+        '../bin/visualize.R'

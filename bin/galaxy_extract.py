@@ -10,7 +10,7 @@ logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG,
 
 #connect to galaxy
 logging.debug('Accessing galaxy instance with API key.')
-domain = 'galaxy.naturalis.nl'
+domain = 'https://galaxy.naturalis.nl'
 api_key = os.environ.get('GALAXY_API_KEY')
 gi = galaxy.GalaxyInstance(domain, key=api_key)
 

@@ -9,11 +9,11 @@ from bioblend.galaxy.tools.inputs import inputs, dataset
 
 # Put the parameters you want to use in here
 def set(tool_name, data_ids, out_file):
-
+# Tinker with order of shit
     if tool_name == 'qiime2 tools import':
-        params = inputs().set('import_root|type', 'SampleData__ob__PairedEndSequencesWithQuality__cb__') \
-            .set('__q2galaxy__GUI__cond__format__|format', 'PairedEndFastqManifestPhred33') \
-            .set('__q2galaxy__GUI__cond__format__|data', dataset(data_ids[0]))
+        params = inputs().set('import_root|__q2galaxy__GUI__cond__format__|data', dataset(data_ids[0])) \
+            .set('import_root|__q2galaxy__GUI__cond__format__|format', 'PairedEndFastqManifestPhred33') \
+            .set('import_root|type', 'SampleData__ob__PairedEndSequencesWithQuality__cb__')
 
     elif tool_name == 'qiime2 dada2 denoise-paired':
         params = inputs().set('demultiplexed_seqs', dataset(data_ids[0])) \
@@ -27,7 +27,7 @@ def set(tool_name, data_ids, out_file):
 
     elif tool_name == 'qiime2 feature-table rarefy':
         params = inputs().set('table', dataset(data_ids[0])) \
-            .set('sampling_depth', 1103)
+            .set('sampling_depth', 52991)
 
     elif tool_name == 'qiime2 diversity alpha-phylogenetic':
         params = inputs().set('table', dataset(data_ids[0])) \
@@ -48,18 +48,6 @@ def set(tool_name, data_ids, out_file):
         params = inputs().set('input', dataset(data_ids[0])) \
             .set('input|type_peek', 'DistanceMatrix') \
             .set('input|fmt_peek', 'DistanceMatrixDirectoryFormat')
-
-#    elif tool_name == 'qiime2 tools export' and 'import' in in_file:
-#            params = inputs().set('input', dataset(data_id)) \
-#                .set('input|type_peek', 'FeatureData__ob__Sequence__cb__') \
-#                .set('input|fmt_peek', 'FeatureData__ob__Sequence__cb__') \
-#                .set('output_format', 'DNAFASTAFormat')
-
-#    elif tool_name == 'qiime2 tools export' and 'mafft-raxml' in in_file:
-#        params = inputs().set('input', dataset(data_ids[0])) \
-#            .set('input|type_peek', 'Phylogeny__ob__Rooted__cb__') \
-#            .set('input|fmt_peek', 'Phylogeny__ob__Rooted__cb__') \
-#            .set('output_format', 'NewickDirectoryFormat')
 
     else:
         print('No parameters for this tool. Check tool list, or definition of tool_name or out_file.')
