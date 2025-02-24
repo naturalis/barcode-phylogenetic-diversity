@@ -1,0 +1,16 @@
+name: barcode-phylogenetic-diversity
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - snakemake
+  - r-base
+  - r-dplyr
+  - r-ggplot2
+  - r-ggrepel
+  - r-ggdendro
+  - conda-forge::pip
+  - pip:
+      - -r requirements.txt

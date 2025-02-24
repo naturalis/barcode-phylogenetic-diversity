@@ -1,15 +1,10 @@
-#Parameter setting script.
-# Needs dada2 parameters
-# If you want to use different tools and/or parameters, copy the existing if/elif structure
-# for the tool and/or parameters of your choosing from XML files in galaxy toolshed.
-
+##Parameter setting script, imported by run_tools.py
 
 # Dependencies
 from bioblend.galaxy.tools.inputs import inputs, dataset
 
 # Put the parameters you want to use in here
 def set(tool_name, data_ids, out_file):
-# Tinker with order of shit
     if tool_name == 'qiime2 tools import':
         params = inputs().set('import_root|__q2galaxy__GUI__cond__format__|data', dataset(data_ids[0])) \
             .set('import_root|__q2galaxy__GUI__cond__format__|format', 'PairedEndFastqManifestPhred33') \
@@ -27,7 +22,7 @@ def set(tool_name, data_ids, out_file):
 
     elif tool_name == 'qiime2 feature-table rarefy':
         params = inputs().set('table', dataset(data_ids[0])) \
-            .set('sampling_depth', 52991)
+            .set('sampling_depth', 51992)
 
     elif tool_name == 'qiime2 diversity alpha-phylogenetic':
         params = inputs().set('table', dataset(data_ids[0])) \

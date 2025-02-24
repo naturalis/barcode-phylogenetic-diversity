@@ -2,7 +2,6 @@
 This is a master internship project of Ciel Huisman at Naturalis Biodiversity Center. 
 Repository for experiments with QIIME-based alpha/beta phylogenetic diversity metrics in the Galaxy environment.
 The aim of this workflow is to provide visualizations of such PD metrics when provided with ITS metabarcoding data.
-Current example data comes from the qiime2 tutorial 'Moving Pictures'.
 
 **Preparation**
 
@@ -13,12 +12,6 @@ Current example data comes from the qiime2 tutorial 'Moving Pictures'.
 **Executing the workflow**
 
 1. Open your terminal and export your API key for access to Galaxy
-2. Create/conda activate the virtual environment 'barcode-phylogenetic-diversity' (will export yaml at some point)
-3. Navigate to 'src' folder
+2. Conda create and activate the virtual environment 'barcode-phylogenetic-diversity' with environment.yml
+3. Navigate to 'src' directory
 4. Run snakemake
-
-**Still under construction**
-
-- dada2 tool is not implemented yet
-- bin/galaxy_paste.py needs to handle multiple inputs
-- bin/visualize.R needs tinkering and is not integrated yet

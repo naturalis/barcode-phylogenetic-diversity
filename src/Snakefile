@@ -1,6 +1,4 @@
 # Snakefile for running the pipeline.
-# Needs dada2 and visualization implementation.
-# To use other tools/parameters, adjust tools.txt and parameters.py, then add rules to this file.
 
 rule all:
     input:
@@ -24,8 +22,8 @@ rule paste_manifest:
     input:
         '../data'
     output:
-        '../data/4854_manifest.csv',
-        '../results/galaxy-ids/paste_manifest_out.txt'
+        temp('../data/4854_manifest.csv'),
+        temp('../results/galaxy-ids/paste_manifest_out.txt')
     log:
         '../results/logs/paste_manifest.log'
     script:
@@ -35,13 +33,13 @@ rule get_tool_names:
     input:
         'tools.txt'
     output:
-        '../results/galaxy-ids/import_tool.txt',
-        '../results/galaxy-ids/dada2_tool.txt',
-        '../results/galaxy-ids/mafft-raxml_tool.txt',
-        '../results/galaxy-ids/rarefy_tool.txt',
-        '../results/galaxy-ids/alpha-phylogenetic_tool.txt',
-        '../results/galaxy-ids/beta-phylogenetic_tool.txt',
-        '../results/galaxy-ids/export_tool.txt'
+        temp('../results/galaxy-ids/import_tool.txt'),
+        temp('../results/galaxy-ids/dada2_tool.txt'),
+        temp('../results/galaxy-ids/mafft-raxml_tool.txt'),
+        temp('../results/galaxy-ids/rarefy_tool.txt'),
+        temp('../results/galaxy-ids/alpha-phylogenetic_tool.txt'),
+        temp('../results/galaxy-ids/beta-phylogenetic_tool.txt'),
+        temp('../results/galaxy-ids/export_tool.txt')
     log:
        	'../results/logs/get_tool_names.log'
     script:
@@ -52,34 +50,34 @@ rule qiime2_import:
         '../results/galaxy-ids/import_tool.txt',
         '../results/galaxy-ids/paste_manifest_out.txt'
     output:
-        '../results/galaxy-ids/import_out.txt'
+        temp('../results/galaxy-ids/import_out.txt')
     log:
         '../results/logs/import.log'
     script:
         '../bin/run_tools.py'
 
-#rule dada2:
-#    input:
-#        '../results/galaxy-ids/dada2_tool.txt',
-#        '../results/galaxy-ids/import_out.txt'
-#    output:
-#        '../results/galaxy-ids/dada2_out.txt',
-#        '../results/galaxy-ids/dada2_out2.txt',
-#        '../results/galaxy-ids/dada2_out3.txt'
-#    log:
-#        '../results/logs/dada2.log'
-#    script:
-#        '../bin/run_tools.py'
+rule dada2:
+    input:
+        '../results/galaxy-ids/dada2_tool.txt',
+        '../results/galaxy-ids/import_out.txt'
+    output:
+        temp('../results/galaxy-ids/dada2_out.txt'),
+        temp('../results/galaxy-ids/dada2_out2.txt'),
+        temp('../results/galaxy-ids/dada2_out3.txt')
+    log:
+        '../results/logs/dada2.log'
+    script:
+        '../bin/run_tools.py'
 
 rule mafft_raxml:
     input:
         '../results/galaxy-ids/mafft-raxml_tool.txt',
         '../results/galaxy-ids/dada2_out2.txt'
     output:
-        '../results/galaxy-ids/mafft-raxml_out.txt',
-        '../results/galaxy-ids/mafft-raxml_out2.txt',
-        '../results/galaxy-ids/mafft-raxml_out3.txt',
-        '../results/galaxy-ids/mafft-raxml_out4.txt'
+        temp('../results/galaxy-ids/mafft-raxml_out.txt'),
+        temp('../results/galaxy-ids/mafft-raxml_out2.txt'),
+        temp('../results/galaxy-ids/mafft-raxml_out3.txt'),
+        temp('../results/galaxy-ids/mafft-raxml_out4.txt')
     log:
         '../results/logs/mafft-raxml.log'
     script:
@@ -90,7 +88,7 @@ rule rarefy:
         '../results/galaxy-ids/rarefy_tool.txt',
         '../results/galaxy-ids/dada2_out3.txt'
     output:
-        '../results/galaxy-ids/rarefy_out.txt'
+        temp('../results/galaxy-ids/rarefy_out.txt')
     log:
         '../results/logs/rarefy.log'
     script:
@@ -102,7 +100,7 @@ rule alpha_div:
         '../results/galaxy-ids/rarefy_out.txt',
         '../results/galaxy-ids/mafft-raxml_out4.txt'
     output:
-        '../results/galaxy-ids/alpha_div_out.txt'
+        temp('../results/galaxy-ids/alpha_div_out.txt')
     log:
         '../results/logs/alpha_div.log'
     script:
@@ -114,7 +112,7 @@ rule beta_div:
         '../results/galaxy-ids/rarefy_out.txt',
         '../results/galaxy-ids/mafft-raxml_out4.txt'
     output:
-        '../results/galaxy-ids/beta_div_out.txt'
+        temp('../results/galaxy-ids/beta_div_out.txt')
     log:
         '../results/logs/beta_div.log'
     script:
@@ -125,7 +123,7 @@ rule qiime2_export_alpha:
         '../results/galaxy-ids/export_tool.txt',
         '../results/galaxy-ids/alpha_div_out.txt'
     output:
-        '../results/galaxy-ids/export_alpha_out.txt'
+        temp('../results/galaxy-ids/export_alpha_out.txt')
     log:
         '../results/logs/export_alpha.log'
     script:
@@ -136,7 +134,7 @@ rule qiime2_export_beta:
         '../results/galaxy-ids/export_tool.txt',
         '../results/galaxy-ids/beta_div_out.txt'
     output:
-        '../results/galaxy-ids/export_beta_out.txt'
+        temp('../results/galaxy-ids/export_beta_out.txt')
     log:
         '../results/logs/export_beta.log'
     script:
@@ -156,13 +154,11 @@ rule extract_data:
 
 rule visualize:
     input:
-        '../results/div-metrics/alpha_diversity.tsv',
-        '../results/div-metrics/beta_diversity.tsv'
+        alpha = '../results/div-metrics/alpha_diversity.tsv',
+        beta = '../results/div-metrics/beta_diversity.tsv'
     output:
-        '../results/div-metrics/alpha_heatmap.png',
-        '../results/div-metrics/beta_dendro.png',
-        '../results/div-metrics/beta_pcoa.png'
-    log:
-        '../results/logs/visualize.log'
-    script:
-        '../bin/visualize.R'
+        heatmap = '../results/div-metrics/alpha_heatmap.png',
+        dendro = '../results/div-metrics/beta_dendro.png',
+        pcoa = '../results/div-metrics/beta_pcoa.png'
+    shell:
+        'Rscript ../bin/visualize.R {input.alpha} {input.beta} {output.heatmap} {output.dendro} {output.pcoa}'
