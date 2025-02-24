@@ -1,7 +1,7 @@
 # barcode-phylogenetic-diversity
 This is a master internship project of Ciel Huisman at Naturalis Biodiversity Center. 
 Repository for experiments with QIIME-based alpha/beta phylogenetic diversity metrics in the Galaxy environment.
-The aim of this workflow is to provide visualizations of such PD metrics when provided with ITS metabarcoding data.
+The goal of this workflow is to provide visualizations of such PD metrics when provided with ITS metabarcoding data.
 
 **Preparation**
 
