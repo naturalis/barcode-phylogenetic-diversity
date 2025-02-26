@@ -36,7 +36,7 @@ ggplot(alpha_div, aes(x = X.SampleID, y=1, fill = faith_pd)) +
 
 # Save plot
 heatmap <- args[3]
-ggsave(heatmap, plot = last_plot(), path = getwd())
+ggsave(filename = heatmap, plot = last_plot(), path = getwd())
 
 
 ## 3.1 Beta diversity preparation
@@ -59,7 +59,7 @@ dendroplot <- ggdendrogram(dend_data, rotate = TRUE, size = 0.5) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
         plot.margin = margin(10, 10, 10, 10, "pt")) +
-  labs(x = "", y = "") +
+  labs(x = "", y = "")
 
 
 # Save dendrogram
@@ -82,7 +82,7 @@ print(pcoaplot)
   
 # Save pcoa
 pcoa <- args[5]
-ggsave(pcoa, plot = last_plot(), path = getwd())
+ggsave(filename = pcoa, plot = last_plot(), path = getwd())
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
