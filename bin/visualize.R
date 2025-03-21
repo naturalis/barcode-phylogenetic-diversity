@@ -1,4 +1,4 @@
-#### This is a script for visualizing exported alpha and beta diversity from qiime2.
+## This is a script for visualizing exported alpha and beta diversity from qiime2.
 # Created 25-03-2024
 
 ### Content
@@ -56,7 +56,7 @@ dend_data <- as.dendrogram(hc)
 
 # Create dendrogram with rotated axis and extra padding around the plot
 dendroplot <- ggdendrogram(dend_data, rotate = TRUE, size = 0.5) +
-  theme_minimal() +
+  theme_minimal(base_size = 14) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
         plot.margin = margin(10, 10, 10, 10, "pt")) +
   labs(x = "", y = "")
@@ -65,7 +65,6 @@ dendroplot <- ggdendrogram(dend_data, rotate = TRUE, size = 0.5) +
 # Save dendrogram
 dendrogram <- args[4]
 ggsave(filename = dendrogram, plot = dendroplot, width = 8, height = 6, dpi = 300, bg = "white")
-
 
 ## 3.3 Beta diversity PCOA
 # Perform pcoa
@@ -78,9 +77,10 @@ pcoaplot <- pcoa_data %>%
   ggplot(aes(x = PC1, y = PC2)) + 
   geom_point() + 
   geom_text_repel(aes(x = PC1, y = PC2), label = rownames(pcoa_data))
+  
 print(pcoaplot)
   
-# Save pcoa
+# Save pcoa plot
 pcoa <- args[5]
 ggsave(filename = pcoa, plot = last_plot(), path = getwd())
 

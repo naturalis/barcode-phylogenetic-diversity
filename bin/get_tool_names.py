@@ -1,6 +1,6 @@
-# Script for obtaining tool names from tools.txt for use by run_tools.py and parameters.py.
+## Script for obtaining tool names from tools.txt for use by run_tools.py and parameters.py.
 
-# configure logging (for consistency)
+# Configure logging (for consistency)
 import logging
 logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG,
                     format='%(asctime)s:%(levelname)s:%(message)s')

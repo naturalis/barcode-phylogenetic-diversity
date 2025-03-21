@@ -1,14 +1,14 @@
-## Running the right tools with the right parameters
+## Script that runs the right tools with the right parameters
 
-#Major dependencies
+# Dependencies
 from bioblend import galaxy
 import os
-#import dotenv
+import dotenv
 import logging
 import parameters
 import requests
 
-# configure logging
+# Configure logging
 logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG,
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
@@ -19,7 +19,7 @@ domain = 'https://galaxy.naturalis.nl'
 response = requests.get(domain)
 logging.debug(f'Response from {domain}: {response}')
 
-#dotenv.load_dotenv(dotenv.find_dotenv(usecwd=True))
+dotenv.load_dotenv(dotenv.find_dotenv(usecwd=True))
 api_key = os.environ.get('GALAXY_API_KEY')
 logging.debug(f"API Key provided: {bool(api_key)}")
 gi = galaxy.GalaxyInstance(domain, key=api_key)
@@ -29,7 +29,6 @@ logging.debug('Getting the right history.')
 history_name = 'barcode-phylogenetic-diversity'
 histories = gi.histories.get_histories(name=history_name)
 history = histories[0]
-
 
 # Storing the snakemake tool name to use for parameter setting and getting the tool
 logging.debug('Preparing snakemake input for parameter setting.')
@@ -44,8 +43,8 @@ for data_path in snakemake.input[1:]:
         data_id = data_f.read().split('\n')
     data_ids.extend(data_id)
 
-## Get the right tool according to tool_name
-# out_file variable is set for dealing with different export parameters (i.e. alpha/beta)
+# Get the right tool according to tool_name
+# The out_file variable is set for dealing with different export parameters (i.e. alpha/beta)
 logging.info('Getting the tool and setting out_file variable.')
 
 tool = gi.tools.get_tools(name=tool_name)
@@ -56,7 +55,7 @@ tool_id = tool[0]['id']
 out_file = os.path.basename(snakemake.output[0])
 params = parameters.set(tool_name, data_ids, out_file)
 
-## Parameter setting and running the tool
+# Parameter setting and running the tool
 logging.info(f"Running the appropriate tool: {tool_name}")
 try:
     results = gi.tools.run_tool(history['id'], tool_id, params)
@@ -67,7 +66,7 @@ try:
 except ConnectionError as e:
     logging.error(f"Failed to run {tool_name}: {e}")
 
-# Saving output ids. Tools with multiple outputs
+# Saving output ids
 logging.info(f"Saving output id(s) of {tool_name} to temporary file(s) for further use.")
 for res in range(len(results['outputs'])):
     output_path = snakemake.output[res]

@@ -4,7 +4,7 @@
 
 The workflow is designed to visualize the alpha and beta diversity of the sequences in this directory. They are the 
 fungal ITS sequences acquired from soil sampled in seven locations in the Netherlands. Their format is demultiplexed 
-FASTQ Phred33 Manifest, indicating they are not multiplexed anymore, contain quality information, were the product of 
+FASTQ Phred33 paired-end, indicating they are not multiplexed anymore, contain quality information, were the product of 
 Illumina sequencing, and require a 'Manifest' file (see below). Another feature of note is that every sample has a 
 forward (R1) and reverse (R2) pair that will be merged eventually, producing fourteen initial files. They were zipped 
 to reduce storage, which resulted in the .gz extension.

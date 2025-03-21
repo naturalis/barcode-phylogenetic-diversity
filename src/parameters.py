@@ -1,9 +1,9 @@
-##Parameter setting script, imported by run_tools.py
+## Parameter setting script, imported by run_tools.py
 
 # Dependencies
 from bioblend.galaxy.tools.inputs import inputs, dataset
 
-# Put the parameters you want to use in here.
+# Put the parameters you want to use in here
 def set(tool_name, data_ids, out_file):
     if tool_name == 'qiime2 tools import':
         params = inputs().set('import_root|__q2galaxy__GUI__cond__format__|data', dataset(data_ids[0])) \

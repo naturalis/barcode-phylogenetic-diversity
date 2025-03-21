@@ -4,17 +4,15 @@ Created on Mon Feb  5 13:57:12 2024
 
 @author: chuis
 """
-## This is a script adjusted from bioblend to connect with the galaxy server and upload sequence data.
-# Needs to be adjusted for multiple inputs to paste
+## This is a script to connect with the galaxy server and upload sequence data.
 
 ##Dependencies
 from bioblend import galaxy
 import os
 import logging
 import csv
-#import dotenv
 
-# configure logging
+# Configure logging
 logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG,
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
@@ -23,7 +21,6 @@ domain = 'https://galaxy.naturalis.nl'
 logging.debug(f"Accessing galaxy instance: {domain}")
 
 # The API key can be obtained from https://galaxy.naturalis.nl/user/api_key
-#dotenv.load_dotenv(dotenv.find_dotenv(usecwd=True))
 api_key = os.environ.get('GALAXY_API_KEY')
 logging.debug(f"API Key provided: {bool(api_key)}")
 gi = galaxy.GalaxyInstance(domain, key=api_key)
@@ -34,13 +31,11 @@ histories = gi.histories.get_histories(name=history_name)
 history = gi.histories.create_history(history_name) if not histories else histories[0]
 logging.info(f"Using history: {history_name}")
 
-
-# loop for pasting each sequences file,
-# samples is an empty list where the manifest data will be stored
+# Loop for pasting each sequences file
+# Samples is an empty list where the manifest data will be stored
 samples = []
-#test_list = ['data/4854_0673_ITS-NL2_1_R1.fastq.gz',
-#        'data/4854_0673_ITS-NL2_1_R2.fastq.gz']
 data_dir = snakemake.input[0]
+
 for file in os.listdir(data_dir):
     logging.info(f"Processing dataset: {file}")
 # Dataset is pasted and id retrieved
@@ -90,7 +85,7 @@ with open(f'{man_csv_out}', 'w') as csvfile:
     writer.writeheader()
     writer.writerows(samples)
 
-# pasting manifest in Galaxy
+# Pasting manifest in Galaxy
 try:
     man_id = gi.tools.upload_file(man_csv_out, history['id'])['outputs'][0]['id']
     man_uuid = gi.datasets.show_dataset(man_id)['uuid']
@@ -100,7 +95,7 @@ try:
 except Exception as e:
     logging.error(f"Failed to paste manifest file: {e}")
 
-#  saving id of manifest file
+# Saving id of manifest file
 man_uuid_out = snakemake.output[1]
 
 with open(f'{man_uuid_out}', 'w') as manout_f:
